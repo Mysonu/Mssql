@@ -1,0 +1,33 @@
+version: "3.4"
+services:
+  #service name
+  sql-server-db:
+    #container name
+    container_name: sql-server-db
+    #image name
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - "1433:1433"  
+    # The container will also always start on daemon startup
+    restart: always
+    #set environment variable
+    environment:
+      SA_PASSWORD: "Pass123!"
+      ACCEPT_EULA: "Y"
+    #choose network
+    networks:
+      - microservice
+  
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: product:latest
+    depends_on:
+      - sql-server-db
+    networks:
+      - microservice
+
+#create network
+networks:
+  microservice:
